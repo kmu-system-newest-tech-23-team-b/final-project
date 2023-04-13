@@ -1,21 +1,21 @@
-use nannou::prelude::*;
+use bevy::prelude::*;
+use bevy::render::camera::ScalingMode;
 
 fn main() {
-    nannou::app(model)
-        .update(update)
-        .simple_window(view)
+    App::new()
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            primary_window: Some(Window {
+                fit_canvas_to_parent: true,
+                prevent_default_event_handling: false,
+                ..default()
+            }),
+            ..default()
+        })).add_startup_system(setup)
         .run();
 }
 
-struct Model {}
-
-fn model(_app: &App) -> Model {
-    Model {}
-}
-
-fn update(_app: &App, _model: &mut Model, _update: Update) {
-}
-
-fn view(_app: &App, _model: &Model, frame: Frame){
-    frame.clear(WHITE);
+fn setup(mut commands: Commands) {
+    let mut camera_bundle = Camera2dBundle::default();
+    camera_bundle.projection.scaling_mode = ScalingMode::FixedVertical(10.);
+    commands.spawn(camera_bundle);
 }
