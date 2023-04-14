@@ -5,6 +5,7 @@ use bevy_matchbox::prelude::*;
 use crate::system_module::network::{GgrsConfig, wait_socket};
 use crate::system_module::player::{input, move_system};
 use crate::system_module::startup::{setup, spawn};
+use crate::system_module::view::follow;
 
 mod system_module;
 mod component;
@@ -26,5 +27,5 @@ fn main() {
         .insert_resource(ClearColor(Color::WHITE))
         .insert_resource(MatchboxSocket::new_ggrs("ws://127.0.0.1:3536/room"))
         .add_startup_systems((setup, spawn))
-        .add_systems((move_system.in_schedule(GGRSSchedule), wait_socket)).run();
+        .add_systems((move_system.in_schedule(GGRSSchedule), wait_socket, follow)).run();
 }

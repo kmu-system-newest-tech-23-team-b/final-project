@@ -4,3 +4,6 @@ use bevy::prelude::*;
 pub struct Player {
     pub handle: usize,
 }
+
+#[derive(Resource)]
+pub struct LocalPlayer(pub usize);
