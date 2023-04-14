@@ -3,7 +3,7 @@ use bevy::render::camera::ScalingMode;
 use bevy_ggrs::RollbackIdProvider;
 
 use crate::component::Player;
-use crate::system_module::view::{GRID_WIDTH, MAP_SIZE};
+use crate::system_module::view::MAP_SIZE;
 
 pub fn setup(mut commands: Commands) {
     let mut camera_bundle = Camera2dBundle::default();
@@ -15,7 +15,7 @@ pub fn setup(mut commands: Commands) {
                 0., i as f32 - MAP_SIZE as f32 / 2., 0.)),
             sprite: Sprite {
                 color: Color::ANTIQUE_WHITE,
-                custom_size: Some(Vec2::new(MAP_SIZE as f32, GRID_WIDTH)),
+                custom_size: Some(Vec2::new(MAP_SIZE as f32, 0.05)),
                 ..default()
             },
             ..default()

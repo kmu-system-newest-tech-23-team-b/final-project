@@ -4,7 +4,7 @@ use bevy_ggrs::ggrs::PlayerType;
 use bevy_matchbox::MatchboxSocket;
 use bevy_matchbox::prelude::*;
 
-use crate::component::LocalPlayer;
+use crate::component::{GameState, LocalPlayer};
 
 pub struct GgrsConfig;
 
@@ -14,7 +14,8 @@ impl ggrs::Config for GgrsConfig {
     type Address = PeerId;
 }
 
-pub fn wait_socket(mut commands: Commands, mut socket: ResMut<MatchboxSocket<SingleChannel>>) {
+pub fn wait_socket(mut commands: Commands, mut socket: ResMut<MatchboxSocket<SingleChannel>>,
+                   mut next_state: ResMut<NextState<GameState>>, ) {
     if socket.get_channel(0).is_err() { return; }
     socket.update_peers();
     let players = socket.players();
@@ -29,4 +30,5 @@ pub fn wait_socket(mut commands: Commands, mut socket: ResMut<MatchboxSocket<Sin
     let socket = socket.take_channel(0).unwrap();
     let session = builder.start_p2p_session(socket).expect("");
     commands.insert_resource(Session::P2PSession(session));
+    next_state.set(GameState::Game);
 }

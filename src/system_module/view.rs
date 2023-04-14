@@ -3,7 +3,6 @@ use bevy::prelude::*;
 use crate::component::{LocalPlayer, Player};
 
 pub const MAP_SIZE: u32 = 10;
-pub const GRID_WIDTH: f32 = 0.05;
 
 pub fn follow(player: Option<Res<LocalPlayer>>, query: Query<(&Player, &Transform)>,
               mut camera: Query<&mut Transform, (With<Camera>, Without<Player>)>, ) {

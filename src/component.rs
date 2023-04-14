@@ -7,3 +7,10 @@ pub struct Player {
 
 #[derive(Resource)]
 pub struct LocalPlayer(pub usize);
+
+#[derive(States, Clone, Eq, PartialEq, Debug, Hash, Default)]
+pub enum GameState {
+    #[default]
+    Match,
+    Game,
+}
