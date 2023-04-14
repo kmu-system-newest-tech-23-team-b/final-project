@@ -30,5 +30,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-cargo-target-${{ hashFiles('Cargo.toml') }}
           ${{ runner.os }}-cargo-target
+    - name: Install alsa dependencies
+      run: sudo apt-get install -y libxcb-shape0-dev libxcb-xfixes0-dev libxcb1-dev libxkbcommon-dev libasound2-dev
     - name: Build
       run: cargo build --verbose
