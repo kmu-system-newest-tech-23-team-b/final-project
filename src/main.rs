@@ -1,13 +1,19 @@
-use bevy::prelude::*;
+use bevy::{prelude::*};
+use bevy_ggrs::*;
+use bevy_matchbox::prelude::*;
 
-use system_module::player::move_system;
-use system_module::startup::{setup, spawn};
+use crate::system_module::network::{GgrsConfig, wait_socket};
+use crate::system_module::player::{input, move_system};
+use crate::system_module::startup::{setup, spawn};
 
 mod system_module;
 mod component;
 
 fn main() {
-    App::new()
+    let mut app = App::new();
+    GGRSPlugin::<GgrsConfig>::new().with_input_system(input)
+        .register_rollback_component::<Transform>().build(&mut app);
+    app.insert_resource(ClearColor(Color::WHITE))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Final Project Team B".to_string(),
@@ -18,7 +24,7 @@ fn main() {
             ..default()
         }))
         .insert_resource(ClearColor(Color::WHITE))
+        .insert_resource(MatchboxSocket::new_ggrs("ws://127.0.0.1:3536/room"))
         .add_startup_systems((setup, spawn))
-        .add_system(move_system)
-        .run();
+        .add_systems((move_system.in_schedule(GGRSSchedule), wait_socket)).run();
 }

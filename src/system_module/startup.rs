@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy::render::camera::ScalingMode;
+use bevy_ggrs::RollbackIdProvider;
 
 use crate::component::Player;
 
@@ -9,16 +10,15 @@ pub fn setup(mut commands: Commands) {
     commands.spawn(camera_bundle);
 }
 
-pub fn spawn(mut commands: Commands) {
-    commands.spawn((
-        Player,
-        SpriteBundle {
-            sprite: Sprite {
-                color: Color::BLUE,
-                custom_size: Some(Vec2::new(1., 1.)),
-                ..default()
-            },
-            ..default()
-        },
-    ));
+pub fn spawn(mut commands: Commands, mut rip: ResMut<RollbackIdProvider>) {
+    commands.spawn((Player { handle: 0 }, rip.next(), SpriteBundle {
+        transform: Transform::from_translation(Vec3::new(-1., -1., 0.)),
+        sprite: Sprite { color: Color::BLUE, ..default() },
+        ..default()
+    }));
+    commands.spawn((Player { handle: 1 }, rip.next(), SpriteBundle {
+        transform: Transform::from_translation(Vec3::new(1., 1., 0.)),
+        sprite: Sprite { color: Color::RED, ..default() },
+        ..default()
+    }));
 }
