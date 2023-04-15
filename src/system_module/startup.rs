@@ -5,7 +5,7 @@ use bevy_ggrs::RollbackIdProvider;
 use crate::component::Player;
 use crate::system_module::view::MAP_SIZE;
 
-pub fn setup(mut commands: Commands) {
+pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mut camera_bundle = Camera2dBundle::default();
     camera_bundle.projection.scaling_mode = ScalingMode::FixedVertical(10.);
     commands.spawn(camera_bundle);
@@ -21,6 +21,33 @@ pub fn setup(mut commands: Commands) {
             ..default()
         });
     }
+
+    commands.spawn(
+        TextBundle::from_sections([
+            TextSection::new(
+                "Score: ",
+                TextStyle {
+                    font: asset_server.load("NotoSansKR-Bold.otf"),
+                    font_size: 50.0,
+                    color: Color::BLACK,
+                },
+            ),
+            TextSection::from_style(TextStyle {
+                font: asset_server.load("NotoSansKR-Bold.otf"),
+                font_size: 50.0,
+                color: Color::BLACK,
+            }),
+        ])
+            .with_style(Style {
+                position_type: PositionType::Absolute,
+                position: UiRect {
+                    top: Val::Px(10.0),
+                    left: Val::Px(10.0),
+                    ..default()
+                },
+                ..default()
+            }),
+    );
 }
 
 pub fn spawn(mut commands: Commands, mut rip: ResMut<RollbackIdProvider>) {

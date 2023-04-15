@@ -3,9 +3,10 @@ use bevy_asset_loader::prelude::*;
 use bevy_ggrs::*;
 use bevy_matchbox::prelude::*;
 
-use crate::component::{GameState};
+use crate::component::{GameState, Scoreboard};
 use crate::system_module::network::{GgrsConfig, wait_socket};
 use crate::system_module::player::{input, move_system};
+use crate::system_module::score::update_score;
 use crate::system_module::startup::{setup, spawn};
 use crate::system_module::view::follow;
 
@@ -30,13 +31,15 @@ fn main() {
             ..default()
         }))
         .insert_resource(ClearColor(Color::WHITE))
+        .insert_resource(Scoreboard { score: 0 })
         .insert_resource(MatchboxSocket::new_ggrs("ws://127.0.0.1:3536/room"))
         .add_systems((
             setup.in_schedule(OnEnter(GameState::Match)),
             wait_socket.run_if(in_state(GameState::Match)),
             spawn.in_schedule(OnEnter(GameState::Game)),
-            follow.run_if(in_state(GameState::Game))
+            follow.run_if(in_state(GameState::Game)),
+            update_score.run_if(in_state(GameState::Game)),
         ))
-        .add_systems((move_system.in_schedule(GGRSSchedule), )
-        ).run();
+        .add_systems((move_system.in_schedule(GGRSSchedule), ))
+        .run();
 }

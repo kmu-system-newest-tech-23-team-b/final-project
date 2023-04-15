@@ -14,3 +14,8 @@ pub enum GameState {
     Match,
     Game,
 }
+
+#[derive(Resource)]
+pub struct Scoreboard {
+    pub score: usize,
+}
