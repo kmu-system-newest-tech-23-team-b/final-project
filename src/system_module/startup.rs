@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy::render::camera::ScalingMode;
+use bevy::tasks::TaskPool;
 use bevy_ggrs::RollbackIdProvider;
 
 use crate::component::Player;
@@ -61,4 +62,15 @@ pub fn spawn(mut commands: Commands, mut rip: ResMut<RollbackIdProvider>) {
         sprite: Sprite { color: Color::RED, ..default() },
         ..default()
     }));
+}
+
+pub fn play_music(_: Commands, asset_server: Res<AssetServer>, audio: Res<Audio>) {
+    let pool = TaskPool::new();
+    pool.scope(|s| {
+        s.spawn(async {
+            audio.play_with_settings(
+                asset_server.load("ganggangsullae.mp3"),
+                PlaybackSettings::LOOP.with_volume(0.1));
+        });
+    });
 }
