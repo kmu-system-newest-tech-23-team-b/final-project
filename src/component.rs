@@ -19,3 +19,8 @@ pub enum GameState {
 pub struct Scoreboard {
     pub score: usize,
 }
+
+#[derive(Component)]
+pub struct Enemy{
+    pub handle: usize,
+}

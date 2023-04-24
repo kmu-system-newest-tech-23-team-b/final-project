@@ -10,6 +10,12 @@ use crate::system_module::score::update_score;
 use crate::system_module::startup::{setup, spawn};
 use crate::system_module::view::follow;
 
+use crate::component::Player;
+use crate::component::Enemy;
+
+pub const PLAYER_SIZE: f32 = 64.0;
+pub const ENEMY_SIZE: f32 = 64.0;
+
 mod system_module;
 mod component;
 
@@ -41,5 +47,22 @@ fn main() {
             update_score.run_if(in_state(GameState::Game)),
         ))
         .add_systems((move_system.in_schedule(GGRSSchedule), ))
+        .add_system(enemy_hit_player)
         .run();
+}
+
+pub fn enemy_hit_player(
+    mut player_query: Query<&Transform, With<Player>>,
+    enemy_query: Query<&Transform, With<Enemy>>,
+) {
+    if let Ok(player_transform) = player_query.get_single_mut() {
+        for enemy_transform in enemy_query.iter() {
+            let distance = player_transform.translation.distance(enemy_transform.translation);
+            let player_radius = PLAYER_SIZE / 2.0;
+            let enemy_radius = ENEMY_SIZE / 2.0;
+            if distance < player_radius + enemy_radius {
+                println!("Enemy Hit Player!");
+            }
+        }
+    }
 }
