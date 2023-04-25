@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use bevy::render::camera::ScalingMode;
 use bevy_ggrs::RollbackIdProvider;
-use bevy_rapier2d::prelude::*;
 
 use crate::component::Player;
 use crate::component::Enemy;
@@ -53,19 +52,19 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 pub fn spawn(mut commands: Commands, mut rip: ResMut<RollbackIdProvider>) {
-    commands.spawn((Player { handle: 0 }, RigidBody::Dynamic, rip.next(), SpriteBundle {
+    commands.spawn((Player { handle: 0 }, rip.next(), SpriteBundle {
         transform: Transform::from_translation(Vec3::new(-2., 0., 100.)),
         sprite: Sprite { color: Color::BLUE, ..default() },
         ..default()
-    })).insert(Collider::cuboid(1.0, 1.0));
-    commands.spawn((Player { handle: 1 }, RigidBody::Dynamic, rip.next(), SpriteBundle {
+    }));
+    commands.spawn((Player { handle: 1 }, rip.next(), SpriteBundle {
         transform: Transform::from_translation(Vec3::new(2., 0., 100.)),
         sprite: Sprite { color: Color::RED, ..default() },
         ..default()
-    })).insert(Collider::cuboid(1.0, 1.0));
-    commands.spawn((Enemy { handle: 0 }, RigidBody::Dynamic, rip.next(), SpriteBundle {
+    }));
+    commands.spawn((Enemy { handle: 0 }, rip.next(), SpriteBundle {
         transform: Transform::from_translation(Vec3::new(0., 2., 100.)),
         sprite: Sprite { color: Color::GREEN, ..default() },
         ..default()
-    })).insert(Collider::cuboid(1.0, 1.0));
+    }));
 }

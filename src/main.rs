@@ -2,6 +2,7 @@ use bevy::{prelude::*};
 use bevy_asset_loader::prelude::*;
 use bevy_ggrs::*;
 use bevy_matchbox::prelude::*;
+use bevy::math::Vec3Swizzles;
 
 use crate::component::{GameState, Scoreboard};
 use crate::system_module::network::{GgrsConfig, wait_socket};
@@ -12,9 +13,6 @@ use crate::system_module::view::follow;
 
 use crate::component::Player;
 use crate::component::Enemy;
-
-pub const PLAYER_SIZE: f32 = 64.0;
-pub const ENEMY_SIZE: f32 = 64.0;
 
 mod system_module;
 mod component;
@@ -52,17 +50,13 @@ fn main() {
 }
 
 pub fn enemy_hit_player(
-    mut player_query: Query<&Transform, With<Player>>,
+    player_query: Query<&Transform, With<Player>>,
     enemy_query: Query<&Transform, With<Enemy>>,
 ) {
-    if let Ok(player_transform) = player_query.get_single_mut() {
+    for player_transform in player_query.iter() {
         for enemy_transform in enemy_query.iter() {
-            let distance = player_transform.translation.distance(enemy_transform.translation);
-            let player_radius = PLAYER_SIZE / 2.0;
-            let enemy_radius = ENEMY_SIZE / 2.0;
-            if distance < player_radius + enemy_radius {
-                println!("Enemy Hit Player!");
-            }
+            let distance = Vec2::distance(player_transform.translation.xy(), enemy_transform.translation.xy(),);
+            if distance < 1.0 { info!("Enemy Hit Player!"); }
         }
     }
 }
