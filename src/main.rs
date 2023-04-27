@@ -4,7 +4,7 @@ use bevy_asset_loader::prelude::*;
 use bevy_ggrs::*;
 use bevy_matchbox::prelude::*;
 
-use crate::component::{GameState, GameDuration};
+use crate::component::{GameState, GameDuration, Playerid};
 use crate::system_module::network::{GgrsConfig, wait_socket};
 use crate::system_module::player::{input, move_system, transition_state};
 use crate::system_module::score::{update_game_data};
@@ -38,6 +38,7 @@ fn main() {
         .add_plugin(GameOverPlugin)
         .insert_resource(ClearColor(Color::WHITE))
         .insert_resource(GameDuration { game_time: Stopwatch::new() })
+        .insert_resource(Playerid { id_0: String::new(), id_1: String::new() })
         .insert_resource(MatchboxSocket::new_ggrs("ws://127.0.0.1:3536/room"))
         .add_systems((
             play_music.in_schedule(OnEnter(GameState::Match)),

@@ -78,11 +78,3 @@ pub const USER_STYLE: Style = Style{
     size: Size::new(Val::Px(200.0), Val::Px(50.0)),
     ..Style::DEFAULT
 };
-
-pub const RESULT_STYLE: Style = Style{
-    flex_direction: FlexDirection::Row,
-    justify_content: JustifyContent::Center,
-    align_items: AlignItems::Center,
-    size: Size::new(Val::Px(150.0), Val::Px(50.0)),
-    ..Style::DEFAULT
-};

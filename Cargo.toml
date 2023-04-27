@@ -10,3 +10,4 @@ bevy = {version = "0.10.1", features = ["mp3"]}
 bevy_ggrs = { version = "0.12", features = ["wasm-bindgen"] }
 bevy_matchbox = { version = "0.6.0", features = ["ggrs"] }
 bevy_asset_loader = "0.16.0"
+chrono = "0.4"

@@ -7,17 +7,15 @@ pub fn update_game_data(time: Res<Time>, mut gameduration: ResMut<GameDuration>,
         Some(handle) => handle.0,
         None => return
     };
-    for mut text in query_text.iter_mut(){
-        if text.sections[0].value.eq("게임 시간: "){
+    for (i, mut text) in query_text.iter_mut().enumerate(){
+        if i == 0{
             gameduration.game_time.tick(time.delta());
             text.sections[1].value = format!("{:.1}", gameduration.game_time.elapsed_secs());
-        }
-        else if text.sections[0].value.eq("내 스코어: "){
+        }else if i == 1{
             for (player, player_src) in query_player.iter(){
                 if player.handle == is_handle { text.sections[1].value = player_src.score.to_string(); }
             }
-        }
-        else{
+        }else if i == 2{
             for (player, player_src) in query_player.iter(){
                 if player.handle != is_handle { text.sections[1].value = player_src.score.to_string(); }
             }

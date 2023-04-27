@@ -111,8 +111,8 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, player_quer
 
 // 게임 시작 시, 게임 종료 후 다시 시작 시 시간과 score를 set 해주는 함수
 pub fn set_time_score(mut gameduration: ResMut<GameDuration>, mut query: Query<&mut Text>){
-    for mut text in query.iter_mut(){
-        if text.sections[0].value.eq("게임 시간: "){
+    for (i, mut text) in query.iter_mut().enumerate(){
+        if i == 0{
             gameduration.game_time = Stopwatch::new();
             text.sections[1].value = format!("{:.1}", gameduration.game_time.elapsed_secs());
         }else{

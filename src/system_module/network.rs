@@ -4,7 +4,7 @@ use bevy_ggrs::ggrs::PlayerType;
 use bevy_matchbox::MatchboxSocket;
 use bevy_matchbox::prelude::*;
 
-use crate::component::{GameState, LocalPlayer};
+use crate::component::{GameState, LocalPlayer, Playerid};
 
 pub struct GgrsConfig;
 
@@ -14,7 +14,7 @@ impl ggrs::Config for GgrsConfig {
     type Address = PeerId;
 }
 
-pub fn wait_socket(mut commands: Commands, mut socket: ResMut<MatchboxSocket<SingleChannel>>) {
+pub fn wait_socket(mut commands: Commands, mut socket: ResMut<MatchboxSocket<SingleChannel>>, mut player_id: ResMut<Playerid>) {
     if socket.get_channel(0).is_err() { return; }
     socket.update_peers();
     let players = socket.players();
@@ -26,7 +26,13 @@ pub fn wait_socket(mut commands: Commands, mut socket: ResMut<MatchboxSocket<Sin
 
     for (i, player) in players.into_iter().enumerate() {
         if player == PlayerType::Local { commands.insert_resource(LocalPlayer(i)); }
-        else {println!("{:?}", player);} // 여기 플레이어 id 가져오는 것 하자.
+        else { 
+            match player {
+                PlayerType::Remote(peer_id) => { player_id.id_0 = peer_id.0.to_string(); }
+                _ => {}
+            }
+            
+        }
         builder = builder.add_player(player, i).expect("");
     }
     let socket = socket.take_channel(0).unwrap();

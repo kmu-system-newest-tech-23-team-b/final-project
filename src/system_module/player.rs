@@ -30,7 +30,10 @@ pub fn input(_: In<ggrs::PlayerHandle>, keys: Res<Input<KeyCode>>, mouses: Res<I
     if keys.any_pressed([KeyCode::Left]) { input |= LEFT }
     if keys.any_pressed([KeyCode::Right]) { input |= RIGHT; }
     if keys.any_pressed([KeyCode::Space]) { input |= SPACE; }
-    if keys.any_pressed([KeyCode::Escape]) { input |= ESC; }
+    if keys.any_pressed([KeyCode::Escape]) { 
+        input |= ESC; 
+        
+    }
     if keys.any_pressed([KeyCode::Return]) { input |= ENTER; }
 
     if mouses.any_pressed([MouseButton::Left]) {
@@ -76,6 +79,7 @@ pub fn transition_state(pi: Res<PlayerInputs<GgrsConfig>>, query_player: Query<&
         // 현재 Game Over에 대한 이벤트가 없어서 임시로 ECS 누를 시 GameOver되게 하는 함수
         else if input & ESC != 0 {
             if game_state.0 != GameState::GameOver {
+                // 게임 종료 이벤트 발생하면 스코어 싱크 맞추는 코드 추가하기
                 commands.insert_resource(NextState(Some(GameState::GameOver)));
             }
         }
