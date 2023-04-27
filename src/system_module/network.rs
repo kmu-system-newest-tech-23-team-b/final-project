@@ -19,7 +19,7 @@ pub fn wait_socket(mut commands: Commands, mut socket: ResMut<MatchboxSocket<Sin
     socket.update_peers();
     let players = socket.players();
     if players.len() < 2 { return; }
-
+    
     let mut builder = ggrs::SessionBuilder::<GgrsConfig>::new()
         .with_num_players(2)
         .with_input_delay(2);

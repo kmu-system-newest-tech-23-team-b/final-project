@@ -11,7 +11,7 @@ pub fn interact_with_replay_button(mut button_query: Query<(&Interaction, &mut B
         match *interaction {
             Interaction::Clicked => {
                 *background_color = PRESSED_BUTTON_COLOR.into();
-                game_state_next_state.set(GameState::Ready)
+                game_state_next_state.set(GameState::Ready);
             } 
             Interaction::Hovered => {
                 *background_color = HOVERED_BUTTON_COLOR.into();

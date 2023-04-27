@@ -3,10 +3,15 @@ use bevy::render::camera::ScalingMode;
 use bevy::time::Stopwatch;
 use bevy_ggrs::RollbackIdProvider;
 
-use crate::component::{Player, GameDuration, Scoreboard};
+use crate::component::{Player, PlayerSrc, GameDuration, Scoreboard};
 use crate::system_module::view::MAP_SIZE;
 
-pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, player_query: Query<Entity, With<Player>>) {
+
+    // 한명이 나가서 Match 상태로 돌아오면 일단 모든 player는 사라져야 함
+    for entity in player_query.iter(){  commands.entity(entity).despawn(); }
+
+
     let mut camera_bundle = Camera2dBundle::default();
     camera_bundle.projection.scaling_mode = ScalingMode::FixedVertical(10.);
     commands.spawn(camera_bundle);
@@ -52,7 +57,7 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(
         TextBundle::from_sections([
             TextSection::new(
-                "스코어: ",
+                "내 스코어: ",
                 TextStyle {
                     font: asset_server.load("NotoSansKR-Bold.otf"),
                     font_size: 50.0,
@@ -75,6 +80,32 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 ..default()
             }),
     );
+    commands.spawn(
+        TextBundle::from_sections([
+            TextSection::new(
+                "동료 스코어: ",
+                TextStyle {
+                    font: asset_server.load("NotoSansKR-Bold.otf"),
+                    font_size: 50.0,
+                    color: Color::BLACK,
+                },
+            ),
+            TextSection::from_style(TextStyle {
+                font: asset_server.load("NotoSansKR-Bold.otf"),
+                font_size: 50.0,
+                color: Color::BLACK,
+            }),
+        ])
+            .with_style(Style {
+                position_type: PositionType::Absolute,
+                position: UiRect {
+                    top: Val::Px(90.0),
+                    left: Val::Px(10.0),
+                    ..default()
+                },
+                ..default()
+            }),
+    );
 }
 
 // 게임 시작 시, 게임 종료 후 다시 시작 시 시간과 score를 set 해주는 함수
@@ -91,14 +122,15 @@ pub fn set_time_score(mut gameduration: ResMut<GameDuration>, mut query: Query<&
 }
 
 // 게임 시작 시, 게임 종료 후 다시 시작 시 player를 set 해주는 함수
-pub fn set_player(mut commands: Commands, mut rip: ResMut<RollbackIdProvider>, mut player_query: Query<Entity, With<Player>>) {
+pub fn set_player(mut commands: Commands, mut rip: ResMut<RollbackIdProvider>, player_query: Query<Entity, With<Player>>) {
 
     // player 및 emeimy 재생성
     for entity in player_query.iter(){  commands.entity(entity).despawn(); }
-
+    
     commands.spawn(
         (
-            Player { handle: 0 }, 
+            Player { handle: 0 },
+            PlayerSrc { score: 0 }, 
             rip.next(), 
             SpriteBundle {
                 transform: Transform::from_translation(Vec3::new(-2., 0., 100.)),
@@ -109,7 +141,8 @@ pub fn set_player(mut commands: Commands, mut rip: ResMut<RollbackIdProvider>, m
     );
     commands.spawn(
         (
-            Player { handle: 1 }, 
+            Player { handle: 1},
+            PlayerSrc { score: 0 }, 
             rip.next(), 
             SpriteBundle {
                 transform: Transform::from_translation(Vec3::new(2., 0., 100.)),

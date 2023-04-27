@@ -13,7 +13,7 @@ pub const GAMEOVER_MENU_STYLE: Style = Style {
     ..Style::DEFAULT
 };
 
-pub const Button_STYLE: Style = Style {
+pub const BUTTON_STYLE: Style = Style {
     justify_content: JustifyContent::Center,
     align_items: AlignItems::Center,
     size: Size::new(Val::Px(200.0), Val::Px(80.0)),

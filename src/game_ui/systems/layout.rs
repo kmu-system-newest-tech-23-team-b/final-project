@@ -7,7 +7,7 @@ pub fn spawn_gameover_menu(mut commands: Commands, asset_server: Res<AssetServer
     build_gameover_menu(&mut commands, &asset_server, &gameduration, &scoreboard);
 }
 
-pub fn despawn_gameover_menu(mut commands: Commands, gameover_menu_query: Query<Entity, With<Gameover_Menu>>) {
+pub fn despawn_gameover_menu(mut commands: Commands, gameover_menu_query: Query<Entity, With<GameoverMenu>>) {
     if let Ok(gameover_menu_entity) = gameover_menu_query.get_single() {
         commands.entity(gameover_menu_entity).despawn_recursive();
     }
@@ -22,7 +22,7 @@ pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServ
                 background_color: Color::GRAY.into(),
                 ..default()
             },
-            Gameover_Menu {},
+            GameoverMenu {},
         ))
 
         .with_children(|parent|{
@@ -175,7 +175,7 @@ pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServ
             // == Replay Button ==
             parent.spawn((
                 ButtonBundle {
-                    style: Button_STYLE,
+                    style: BUTTON_STYLE,
                     background_color: NORMAL_BUTTON_COLOR.into(),
                     ..default()
                 },
@@ -197,7 +197,7 @@ pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServ
             // == Quit Button ==
             parent.spawn((
                 ButtonBundle {
-                    style: Button_STYLE,
+                    style: BUTTON_STYLE,
                     background_color: NORMAL_BUTTON_COLOR.into(),
                     ..default()
                 },

@@ -1,7 +1,7 @@
 use bevy::prelude::Component;
 
 #[derive(Component)]
-pub struct Gameover_Menu {}
+pub struct GameoverMenu {}
 
 #[derive(Component)]
 pub struct ReplayButton {}

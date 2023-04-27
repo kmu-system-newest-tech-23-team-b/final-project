@@ -1,16 +1,13 @@
-use bevy::input::keyboard;
 use bevy::time::Stopwatch;
-use bevy::transform::commands;
 use bevy::{prelude::*};
 use bevy_asset_loader::prelude::*;
 use bevy_ggrs::*;
 use bevy_matchbox::prelude::*;
-use system_module::player;
 
 use crate::component::{GameState, GameDuration, Scoreboard};
 use crate::system_module::network::{GgrsConfig, wait_socket};
-use crate::system_module::player::{input, move_system, transition_to_start, transition_to_ready, transition_to_gameover};
-use crate::system_module::score::{update_time};
+use crate::system_module::player::{input, move_system, transition_state};
+use crate::system_module::score::{update_game_data};
 use crate::system_module::startup::{setup, set_player, set_time_score};
 use crate::system_module::view::follow;
 use game_ui::GameOverPlugin;
@@ -47,9 +44,7 @@ fn main() {
             // Before Match
             setup.in_schedule(OnEnter(GameState::Match)),
             wait_socket.run_if(in_state(GameState::Match)),
-            transition_to_start.in_schedule(GGRSSchedule),
-            transition_to_ready.in_schedule(GGRSSchedule),
-            transition_to_gameover.in_schedule(GGRSSchedule),
+            transition_state.in_schedule(GGRSSchedule),
 
             // Matching and Ready
             set_time_score.in_schedule(OnEnter(GameState::Ready)),
@@ -58,7 +53,7 @@ fn main() {
 
             // Start Game
             move_system.in_schedule(GGRSSchedule).run_if(in_state(GameState::Game)),
-            update_time.run_if(in_state(GameState::Game)),
+            update_game_data.run_if(in_state(GameState::Game)),
             follow.run_if(in_state(GameState::Game)),
 
             // Game Over
