@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::time::Stopwatch;
 
 #[derive(Component)]
 pub struct Player {
@@ -12,7 +13,14 @@ pub struct LocalPlayer(pub usize);
 pub enum GameState {
     #[default]
     Match,
+    Ready,
     Game,
+    GameOver,
+}
+
+#[derive(Resource)]
+pub struct GameDuration {
+    pub game_time: Stopwatch,
 }
 
 #[derive(Resource)]
