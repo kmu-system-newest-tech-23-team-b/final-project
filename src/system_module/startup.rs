@@ -152,6 +152,7 @@ pub fn set_player(mut commands: Commands, mut rip: ResMut<RollbackIdProvider>, p
             },
         )
     );
+}
 
 pub fn play_music(_: Commands, asset_server: Res<AssetServer>, audio: Res<Audio>) {
     let pool = TaskPool::new();
