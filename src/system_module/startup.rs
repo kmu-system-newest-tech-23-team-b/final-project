@@ -4,7 +4,7 @@ use bevy::time::Stopwatch;
 use bevy::tasks::TaskPool;
 use bevy_ggrs::RollbackIdProvider;
 
-use crate::component::{Player, PlayerSrc, GameDuration, Scoreboard};
+use crate::component::{Player, PlayerSrc, GameDuration};
 use crate::system_module::view::MAP_SIZE;
 
 pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, player_query: Query<Entity, With<Player>>) {
@@ -110,14 +110,13 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, player_quer
 }
 
 // 게임 시작 시, 게임 종료 후 다시 시작 시 시간과 score를 set 해주는 함수
-pub fn set_time_score(mut gameduration: ResMut<GameDuration>, mut query: Query<&mut Text>, mut scoreboard: ResMut<Scoreboard>){
+pub fn set_time_score(mut gameduration: ResMut<GameDuration>, mut query: Query<&mut Text>){
     for mut text in query.iter_mut(){
         if text.sections[0].value.eq("게임 시간: "){
             gameduration.game_time = Stopwatch::new();
             text.sections[1].value = format!("{:.1}", gameduration.game_time.elapsed_secs());
         }else{
-            scoreboard.score = 0;
-            text.sections[1].value = scoreboard.score.to_string();
+            text.sections[1].value = 0.to_string();
         }
     }
 }

@@ -21,8 +21,8 @@ const QUIT: u8 = 1 << 7;
 const CLICK_QUIT: u8 = 1 << 7; // game out
 
 pub fn input(_: In<ggrs::PlayerHandle>, keys: Res<Input<KeyCode>>, mouses: Res<Input<MouseButton>>,
-             mut replay_button_query: Query<&Interaction,(Changed<Interaction>, With<ReplayButton>)>,
-             mut quit_button_query: Query<&Interaction,(Changed<Interaction>, With<QuitButton>)>
+             replay_button_query: Query<&Interaction,(Changed<Interaction>, With<ReplayButton>)>,
+             quit_button_query: Query<&Interaction,(Changed<Interaction>, With<QuitButton>)>
             ) -> u8 {
     let mut input = 0;
     if keys.any_pressed([KeyCode::Up]) { input |= UP; }

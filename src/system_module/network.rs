@@ -26,7 +26,7 @@ pub fn wait_socket(mut commands: Commands, mut socket: ResMut<MatchboxSocket<Sin
 
     for (i, player) in players.into_iter().enumerate() {
         if player == PlayerType::Local { commands.insert_resource(LocalPlayer(i)); }
-        else {println!("{:?}", player);}
+        else {println!("{:?}", player);} // 여기 플레이어 id 가져오는 것 하자.
         builder = builder.add_player(player, i).expect("");
     }
     let socket = socket.take_channel(0).unwrap();

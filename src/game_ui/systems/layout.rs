@@ -1,10 +1,11 @@
 use bevy::prelude::*;
 use crate::game_ui::components::*;
 use crate::game_ui::styles::*;
-use crate::component::{GameDuration, Scoreboard};
+use crate::component::{Player, PlayerSrc, LocalPlayer, GameDuration};
 
-pub fn spawn_gameover_menu(mut commands: Commands, asset_server: Res<AssetServer>, gameduration: Res<GameDuration>, scoreboard: Res<Scoreboard>) {
-    build_gameover_menu(&mut commands, &asset_server, &gameduration, &scoreboard);
+pub fn spawn_gameover_menu(mut commands: Commands, asset_server: Res<AssetServer>, gameduration: Res<GameDuration>,
+                           query_player: Query<(&Player, &PlayerSrc)>, local_player: Option<Res<LocalPlayer>>) {
+    build_gameover_menu(&mut commands, &asset_server, &gameduration, query_player, local_player);
 }
 
 pub fn despawn_gameover_menu(mut commands: Commands, gameover_menu_query: Query<Entity, With<GameoverMenu>>) {
@@ -13,7 +14,19 @@ pub fn despawn_gameover_menu(mut commands: Commands, gameover_menu_query: Query<
     }
 }
 
-pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServer>, gameduration: &Res<GameDuration>, scoreboard: &Res<Scoreboard>) -> Entity {
+pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServer>, gameduration: &Res<GameDuration>,
+                           query_player: Query<(&Player, &PlayerSrc)>, local_player: Option<Res<LocalPlayer>>) -> Entity {
+    let mut player1_score = String::new();
+    let mut player2_score = String::new();
+    let is_handle = match local_player {
+        Some(handle) => handle.0,
+        None => 2
+    };
+    for (player, player_src) in query_player.iter(){
+        if player.handle == is_handle { player1_score = player_src.score.to_string(); }
+        else { player2_score = player_src.score.to_string();}
+    }
+
     let gameover_menu_entity = commands
         .spawn(
             (
@@ -60,6 +73,26 @@ pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServ
                     });
                 });
             // == Game Result ==
+            // 시간 출력
+            parent.spawn(
+                NodeBundle{
+                    style: USER_STYLE,
+                    ..default()
+                }).with_children(|parent|{
+                    parent.spawn(TextBundle{
+                        text: Text {
+                            sections: vec![
+                                TextSection::new(
+                                    format!("게임 시간: {:.0}초", gameduration.game_time.elapsed_secs()),
+                                    get_user_text_style(&asset_server),
+                                )
+                            ],
+                            alignment: TextAlignment::Center,
+                            ..default()
+                        },
+                        ..default()
+                    });
+                });
             // 사용자 출력
             parent.spawn(
                 NodeBundle{
@@ -71,7 +104,20 @@ pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServ
                             sections: vec![
                                 TextSection::new(
                                     format!("사용자 1"),
-                                    get_user_text_style(&asset_server),
+                                    get_result_text_style(&asset_server),
+                                )
+                            ],
+                            alignment: TextAlignment::Center,
+                            ..default()
+                        },
+                        ..default()
+                    });
+                    parent.spawn(TextBundle{
+                        text: Text {
+                            sections: vec![
+                                TextSection::new(
+                                    format!("    스코어: {}", player1_score),
+                                    get_result_text_style(&asset_server),
                                 )
                             ],
                             alignment: TextAlignment::Center,
@@ -80,41 +126,6 @@ pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServ
                         ..default()
                     });
                 });
-            // 결과 출력
-            parent.spawn(
-                NodeBundle{
-                    style: RESULT_STYLE,
-                    ..default()
-                }).with_children(|parent|{
-                    // 게임 시간 Text
-                    parent.spawn(TextBundle{
-                        text: Text {
-                            sections: vec![
-                                TextSection::new(
-                                    format!("게임 시간: {:.0}", gameduration.game_time.elapsed_secs()),
-                                    get_result_text_style(&asset_server),
-                                )
-                            ],
-                            alignment: TextAlignment::Center,
-                            ..default()
-                        },
-                        ..default()
-                    });
-                    // 게임 스코어 Text
-                    parent.spawn(TextBundle{
-                        text: Text {
-                            sections: vec![
-                                TextSection::new(
-                                    format!("    스코어: {}", scoreboard.score.to_string()),
-                                    get_result_text_style(&asset_server),
-                                )
-                            ],
-                            alignment: TextAlignment::Center,
-                            ..default()
-                        },
-                        ..default()
-                    });
-                }); 
             
             // 사용자 출력
             parent.spawn(
@@ -127,7 +138,20 @@ pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServ
                             sections: vec![
                                 TextSection::new(
                                     format!("사용자 2"),
-                                    get_user_text_style(&asset_server),
+                                    get_result_text_style(&asset_server),
+                                )
+                            ],
+                            alignment: TextAlignment::Center,
+                            ..default()
+                        },
+                        ..default()
+                    });
+                    parent.spawn(TextBundle{
+                        text: Text {
+                            sections: vec![
+                                TextSection::new(
+                                    format!("    스코어: {}", player2_score),
+                                    get_result_text_style(&asset_server),
                                 )
                             ],
                             alignment: TextAlignment::Center,
@@ -136,41 +160,6 @@ pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServ
                         ..default()
                     });
                 });
-            // 결과 출력
-            parent.spawn(
-                NodeBundle{
-                    style: RESULT_STYLE,
-                    ..default()
-                }).with_children(|parent|{
-                    // 게임 시간 Text
-                    parent.spawn(TextBundle{
-                        text: Text {
-                            sections: vec![
-                                TextSection::new(
-                                    format!("게임 시간: {:.0}", gameduration.game_time.elapsed_secs()),
-                                    get_result_text_style(&asset_server),
-                                )
-                            ],
-                            alignment: TextAlignment::Center,
-                            ..default()
-                        },
-                        ..default()
-                    });
-                    // 게임 스코어 Text
-                    parent.spawn(TextBundle{
-                        text: Text {
-                            sections: vec![
-                                TextSection::new(
-                                    format!("    스코어: {}", scoreboard.score.to_string()),
-                                    get_result_text_style(&asset_server),
-                                )
-                            ],
-                            alignment: TextAlignment::Center,
-                            ..default()
-                        },
-                        ..default()
-                    });
-                }); 
 
             // == Replay Button ==
             parent.spawn((

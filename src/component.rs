@@ -6,6 +6,10 @@ pub struct Player {
     pub handle: usize,
 }
 
+pub struct Player_Id {
+    pub id: String,
+}
+
 // Player_src는 Player의 상태를 변경하는 구조체
 // 위의 Player Component 구조체의 데이터로 넣지 않은 이유는 mut 과정에서 충돌이 나기 때문..
 #[derive(Component)]
@@ -28,9 +32,4 @@ pub enum GameState {
 #[derive(Resource)]
 pub struct GameDuration {
     pub game_time: Stopwatch,
-}
-
-#[derive(Resource)]
-pub struct Scoreboard {
-    pub score: usize,
 }
