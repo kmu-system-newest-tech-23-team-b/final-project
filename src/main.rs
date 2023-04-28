@@ -8,7 +8,7 @@ use crate::component::{GameState, Scoreboard};
 use crate::system_module::network::{GgrsConfig, wait_socket};
 use crate::system_module::player::{input, move_system};
 use crate::system_module::score::update_score;
-use crate::system_module::startup::{setup, spawn};
+use crate::system_module::startup::{play_music, setup, spawn};
 use crate::system_module::view::follow;
 
 use crate::component::Player;
@@ -38,6 +38,7 @@ fn main() {
         .insert_resource(Scoreboard { score: 0 })
         .insert_resource(MatchboxSocket::new_ggrs("ws://127.0.0.1:3536/room"))
         .add_systems((
+            play_music.in_schedule(OnEnter(GameState::Match)),
             setup.in_schedule(OnEnter(GameState::Match)),
             wait_socket.run_if(in_state(GameState::Match)),
             spawn.in_schedule(OnEnter(GameState::Game)),
