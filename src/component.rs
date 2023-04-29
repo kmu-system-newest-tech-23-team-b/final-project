@@ -26,7 +26,11 @@ pub enum GameState {
     GameOver,
 }
 
-#[derive(Resource)]
+#[derive(Component)]
+pub struct Enemy{
+    pub handle: usize,
+}
+
 pub struct GameDuration {
     pub game_time: Stopwatch,
 }

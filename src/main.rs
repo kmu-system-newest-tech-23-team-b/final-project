@@ -4,6 +4,7 @@ use bevy::{prelude::*};
 use bevy_asset_loader::prelude::*;
 use bevy_ggrs::*;
 use bevy_matchbox::prelude::*;
+use bevy::math::Vec3Swizzles;
 
 use crate::component::{GameState, GameDuration, Playerid};
 use crate::system_module::network::{GgrsConfig, wait_socket};
@@ -12,6 +13,9 @@ use crate::system_module::score::{update_game_data};
 use crate::system_module::startup::{play_music, setup, set_player, set_time_score};
 use crate::system_module::view::follow;
 use game_ui::GameOverPlugin;
+
+use crate::component::Player;
+use crate::component::Enemy;
 
 mod system_module;
 mod component;
@@ -59,5 +63,18 @@ fn main() {
 
             // Game Over
         ))
+        .add_system(enemy_hit_player)
         .run();
+}
+
+pub fn enemy_hit_player(
+    player_query: Query<&Transform, With<Player>>,
+    enemy_query: Query<&Transform, With<Enemy>>,
+) {
+    for player_transform in player_query.iter() {
+        for enemy_transform in enemy_query.iter() {
+            let distance = Vec2::distance(player_transform.translation.xy(), enemy_transform.translation.xy(),);
+            if distance < 1.0 { info!("Enemy Hit Player!"); }
+        }
+    }
 }

@@ -4,7 +4,7 @@ use bevy::time::Stopwatch;
 use bevy::tasks::TaskPool;
 use bevy_ggrs::RollbackIdProvider;
 
-use crate::component::{Player, PlayerSrc, GameDuration};
+use crate::component::{Player, PlayerSrc, GameDuration, Enemy};
 use crate::system_module::view::MAP_SIZE;
 
 pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, player_query: Query<Entity, With<Player>>) {
