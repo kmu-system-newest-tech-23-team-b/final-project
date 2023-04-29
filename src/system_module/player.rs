@@ -2,8 +2,7 @@ use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy::app::AppExit;
 use bevy_ggrs::{ggrs, PlayerInputs};
-
-use crate::component::{Player, GameState, PlayerSrc};
+use crate::component::{Player, GameState, PlayerSrc, Enemy};
 use crate::system_module::network::GgrsConfig;
 use crate::system_module::view::MAP_SIZE;
 use crate::game_ui::components::{ReplayButton, QuitButton};
@@ -116,5 +115,14 @@ pub fn move_system(pi: Res<PlayerInputs<GgrsConfig>>, mut query: Query<(&mut Tra
         let pos = (transform.translation.xy() + direction).clamp(-limit, limit);
         transform.translation.x = pos.x;
         transform.translation.y = pos.y;
+    }
+}
+
+pub fn enemy_movement(mut query: Query<(&mut Transform, &Enemy)>, time: Res<Time>) {
+    for (mut transform, enemy) in query.iter_mut() {
+        let position = Vec3::new(enemy.position.x, enemy.position.y, 0.0);
+        println!("{}", time.delta_seconds());
+        transform.translation.x -= position.x * enemy.speed * time.delta_seconds();
+        transform.translation.y -= position.y * enemy.speed * time.delta_seconds();
     }
 }

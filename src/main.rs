@@ -8,9 +8,9 @@ use bevy::math::Vec3Swizzles;
 
 use crate::component::{GameState, GameDuration, Playerid};
 use crate::system_module::network::{GgrsConfig, wait_socket};
-use crate::system_module::player::{input, move_system, transition_state};
+use crate::system_module::player::{input, move_system, transition_state, enemy_movement};
 use crate::system_module::score::{update_game_data};
-use crate::system_module::startup::{play_music, setup, set_player, set_time_score};
+use crate::system_module::startup::{play_music, setup, set_player, set_time_score, spawn_enemy, despawn_enemy};
 use crate::system_module::view::follow;
 use game_ui::GameOverPlugin;
 
@@ -60,8 +60,12 @@ fn main() {
             move_system.in_schedule(GGRSSchedule).run_if(in_state(GameState::Game)),
             update_game_data.run_if(in_state(GameState::Game)),
             follow.run_if(in_state(GameState::Game)),
-
-            // Game Over
+            spawn_enemy.in_schedule(OnEnter(GameState::Game)),
+        ))
+        .add_systems((
+            enemy_movement,
+            despawn_enemy,
+        ))
         ))
         .add_system(enemy_hit_player)
         .run();

@@ -7,6 +7,13 @@ pub struct Player {
     pub handle: usize,
 }
 
+#[derive(Component)]
+pub struct Enemy{
+    pub handle: usize,
+    pub position: Vec2,
+    pub speed: f32,
+}
+
 // Player_src는 Player의 상태를 변경하는 구조체
 // 위의 Player Component 구조체의 데이터로 넣지 않은 이유는 mut 과정에서 충돌이 나기 때문..
 #[derive(Component)]
@@ -24,11 +31,6 @@ pub enum GameState {
     Ready,
     Game,
     GameOver,
-}
-
-#[derive(Component)]
-pub struct Enemy{
-    pub handle: usize,
 }
 
 #[derive(Resource)]
