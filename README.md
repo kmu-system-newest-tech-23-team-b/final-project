@@ -1,8 +1,8 @@
 # final-project
 
-Game title : multi dino runner
+Game title : Dodge game
 
-Game genre : endless runner
+Game genre : bullet game
 
 Game play : Press the Space-bar
 
