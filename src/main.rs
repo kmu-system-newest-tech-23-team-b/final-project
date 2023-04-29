@@ -1,25 +1,35 @@
+use bevy::time::Stopwatch;
+use uuid::Uuid;
 use bevy::{prelude::*};
 use bevy_asset_loader::prelude::*;
 use bevy_ggrs::*;
 use bevy_matchbox::prelude::*;
+use bevy::math::Vec3Swizzles;
 
-use crate::component::{GameState, Scoreboard};
+use crate::component::{GameState, GameDuration, Playerid};
 use crate::system_module::network::{GgrsConfig, wait_socket};
-use crate::system_module::player::{input, move_system, enemy_movement};
-use crate::system_module::score::update_score;
-use crate::system_module::startup::{play_music, setup, spawn, spawn_enemy, despawn_enemy};
+use crate::system_module::player::{input, move_system, transition_state, enemy_movement};
+use crate::system_module::score::{update_game_data};
+use crate::system_module::startup::{play_music, setup, set_player, set_time_score, spawn_enemy, despawn_enemy};
 use crate::system_module::view::follow;
+use game_ui::GameOverPlugin;
+
+use crate::component::Player;
+use crate::component::Enemy;
 
 mod system_module;
 mod component;
+mod game_ui;
 
 fn main() {
     let mut app = App::new();
     app.add_state::<GameState>().add_loading_state(
         LoadingState::new(GameState::Match)
     );
+    
     GGRSPlugin::<GgrsConfig>::new().with_input_system(input)
         .register_rollback_component::<Transform>().build(&mut app);
+
     app.insert_resource(ClearColor(Color::WHITE))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
@@ -30,22 +40,45 @@ fn main() {
             }),
             ..default()
         }))
+        .add_plugin(GameOverPlugin)
         .insert_resource(ClearColor(Color::WHITE))
-        .insert_resource(Scoreboard { score: 0 })
+        .insert_resource(GameDuration { game_time: Stopwatch::new() })
+        .insert_resource(Playerid { id_0: Uuid::new_v4(), id_1: Uuid::new_v4() })
         .insert_resource(MatchboxSocket::new_ggrs("ws://127.0.0.1:3536/room"))
         .add_systems((
             play_music.in_schedule(OnEnter(GameState::Match)),
             setup.in_schedule(OnEnter(GameState::Match)),
             wait_socket.run_if(in_state(GameState::Match)),
-            spawn.in_schedule(OnEnter(GameState::Game)),
+            transition_state.in_schedule(GGRSSchedule),
+
+            // Matching and Ready
+            set_time_score.in_schedule(OnEnter(GameState::Ready)),
+            set_player.in_schedule(OnEnter(GameState::Ready)),
+            follow.run_if(in_state(GameState::Ready)),
+
+            // Start Game
+            move_system.in_schedule(GGRSSchedule).run_if(in_state(GameState::Game)),
+            update_game_data.run_if(in_state(GameState::Game)),
             follow.run_if(in_state(GameState::Game)),
-            update_score.run_if(in_state(GameState::Game)),
             spawn_enemy.in_schedule(OnEnter(GameState::Game)),
         ))
         .add_systems((
-            move_system.in_schedule(GGRSSchedule),
             enemy_movement,
             despawn_enemy,
         ))
+        ))
+        .add_system(enemy_hit_player)
         .run();
+}
+
+pub fn enemy_hit_player(
+    player_query: Query<&Transform, With<Player>>,
+    enemy_query: Query<&Transform, With<Enemy>>,
+) {
+    for player_transform in player_query.iter() {
+        for enemy_transform in enemy_query.iter() {
+            let distance = Vec2::distance(player_transform.translation.xy(), enemy_transform.translation.xy(),);
+            if distance < 1.0 { info!("Enemy Hit Player!"); }
+        }
+    }
 }
