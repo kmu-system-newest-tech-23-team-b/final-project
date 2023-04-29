@@ -1,0 +1,1 @@
+cargo build --bin "final-project" --release --target="x86_64-apple-darwin"
