@@ -1,4 +1,5 @@
 use bevy::time::Stopwatch;
+use uuid::Uuid;
 use bevy::{prelude::*};
 use bevy_asset_loader::prelude::*;
 use bevy_ggrs::*;
@@ -38,7 +39,7 @@ fn main() {
         .add_plugin(GameOverPlugin)
         .insert_resource(ClearColor(Color::WHITE))
         .insert_resource(GameDuration { game_time: Stopwatch::new() })
-        .insert_resource(Playerid { id_0: String::new(), id_1: String::new() })
+        .insert_resource(Playerid { id_0: Uuid::new_v4(), id_1: Uuid::new_v4() })
         .insert_resource(MatchboxSocket::new_ggrs("ws://127.0.0.1:3536/room"))
         .add_systems((
             play_music.in_schedule(OnEnter(GameState::Match)),

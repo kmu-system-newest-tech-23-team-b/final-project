@@ -8,7 +8,7 @@ use crate::component::{Player, PlayerSrc, LocalPlayer, GameDuration, Playerid};
 
 pub fn spawn_gameover_menu(mut commands: Commands, asset_server: Res<AssetServer>, gameduration: Res<GameDuration>,
                            query_player: Query<(&Player, &PlayerSrc)>, local_player: Option<Res<LocalPlayer>>, player_id: Res<Playerid>) {
-    build_gameover_menu(&mut commands, &asset_server, &gameduration, query_player, local_player, player_id);
+    build_gameover_menu(&mut commands, &asset_server, &gameduration, query_player, local_player, &player_id);
 }
 
 pub fn despawn_gameover_menu(mut commands: Commands, gameover_menu_query: Query<Entity, With<GameoverMenu>>) {
@@ -19,11 +19,11 @@ pub fn despawn_gameover_menu(mut commands: Commands, gameover_menu_query: Query<
 
 pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServer>, gameduration: &Res<GameDuration>,
                            query_player: Query<(&Player, &PlayerSrc)>, local_player: Option<Res<LocalPlayer>>,
-                           player_id: Res<Playerid>) -> Entity {
+                           player_id: &Res<Playerid>) -> Entity {
     let mut player1_score = String::new();
-    let player1_id: Vec<&str> = player_id.id_0.split("-").collect();
+    let player1_id = player_id.id_0.to_string();
     let mut player2_score = String::new();
-    let player2_id: Vec<&str> = player_id.id_1.split("-").collect();
+    let player2_id = player_id.id_1.to_string();
     let mut final_scroe = 0;
     let now = Local::now();
     let is_handle = match local_player {
@@ -122,7 +122,7 @@ pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServ
                         text: Text {
                             sections: vec![
                                 TextSection::new(
-                                    format!("나 (id: {}...)", player1_id[0]),
+                                    format!("나 (socket id: {})", player1_id),
                                     get_result_text_style(&asset_server),
                                 )
                             ],
@@ -156,7 +156,7 @@ pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServ
                         text: Text {
                             sections: vec![
                                 TextSection::new(
-                                    format!("사용자 2"),
+                                    format!("동료 (socket id: {})", player2_id),
                                     get_result_text_style(&asset_server),
                                 )
                             ],

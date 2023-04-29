@@ -1,3 +1,4 @@
+use uuid::Uuid;
 use bevy::prelude::*;
 use bevy::time::Stopwatch;
 
@@ -32,6 +33,6 @@ pub struct GameDuration {
 
 #[derive(Resource)]
 pub struct Playerid {
-    pub id_0: String,
-    pub id_1: String,
+    pub id_0: Uuid,
+    pub id_1: Uuid,
 }
