@@ -31,6 +31,7 @@ pub struct Enemy{
     pub handle: usize,
 }
 
+#[derive(Resource)]
 pub struct GameDuration {
     pub game_time: Stopwatch,
 }
