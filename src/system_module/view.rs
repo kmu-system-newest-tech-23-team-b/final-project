@@ -19,3 +19,4 @@ pub fn follow(player: Option<Res<LocalPlayer>>, query: Query<(&Player, &Transfor
         }
     }
 }
+
