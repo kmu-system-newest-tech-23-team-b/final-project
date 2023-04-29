@@ -5,9 +5,9 @@ use bevy_matchbox::prelude::*;
 
 use crate::component::{GameState, Scoreboard};
 use crate::system_module::network::{GgrsConfig, wait_socket};
-use crate::system_module::player::{input, move_system};
+use crate::system_module::player::{input, move_system, enemy_movement};
 use crate::system_module::score::update_score;
-use crate::system_module::startup::{play_music, setup, spawn};
+use crate::system_module::startup::{play_music, setup, spawn, spawn_enemy, despawn_enemy};
 use crate::system_module::view::follow;
 
 mod system_module;
@@ -40,7 +40,12 @@ fn main() {
             spawn.in_schedule(OnEnter(GameState::Game)),
             follow.run_if(in_state(GameState::Game)),
             update_score.run_if(in_state(GameState::Game)),
+            spawn_enemy.in_schedule(OnEnter(GameState::Game)),
         ))
-        .add_systems((move_system.in_schedule(GGRSSchedule), ))
+        .add_systems((
+            move_system.in_schedule(GGRSSchedule),
+            enemy_movement,
+            despawn_enemy,
+        ))
         .run();
 }
