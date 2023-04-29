@@ -121,7 +121,6 @@ pub fn move_system(pi: Res<PlayerInputs<GgrsConfig>>, mut query: Query<(&mut Tra
 pub fn enemy_movement(mut query: Query<(&mut Transform, &Enemy)>, time: Res<Time>) {
     for (mut transform, enemy) in query.iter_mut() {
         let position = Vec3::new(enemy.position.x, enemy.position.y, 0.0);
-        println!("{}", time.delta_seconds());
         transform.translation.x -= position.x * enemy.speed * time.delta_seconds();
         transform.translation.y -= position.y * enemy.speed * time.delta_seconds();
     }

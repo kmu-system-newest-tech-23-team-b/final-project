@@ -66,19 +66,19 @@ fn main() {
             enemy_movement,
             despawn_enemy,
         ))
-        ))
         .add_system(enemy_hit_player)
         .run();
 }
 
 pub fn enemy_hit_player(
+    mut commands: Commands,
     player_query: Query<&Transform, With<Player>>,
     enemy_query: Query<&Transform, With<Enemy>>,
 ) {
     for player_transform in player_query.iter() {
         for enemy_transform in enemy_query.iter() {
             let distance = Vec2::distance(player_transform.translation.xy(), enemy_transform.translation.xy(),);
-            if distance < 1.0 { info!("Enemy Hit Player!"); }
+            if distance < 0.3 { commands.insert_resource(NextState(Some(GameState::GameOver)));}
         }
     }
 }
