@@ -10,7 +10,7 @@ use crate::component::{GameState, GameDuration, Playerid};
 use crate::system_module::network::{GgrsConfig, wait_socket};
 use crate::system_module::player::{input, move_system, transition_state, enemy_movement};
 use crate::system_module::score::{update_game_data};
-use crate::system_module::startup::{play_music, setup, set_player, set_time_score, spawn_enemy, despawn_enemy};
+use crate::system_module::startup::{play_music, setup, set_player, set_time_score, spawn_enemy, despawn_enemy, game_start_ui, despawn_start_ui};
 use crate::system_module::view::follow;
 use game_ui::GameOverPlugin;
 
@@ -43,7 +43,7 @@ fn main() {
         .add_plugin(GameOverPlugin)
         .insert_resource(ClearColor(Color::WHITE))
         .insert_resource(GameDuration { game_time: Stopwatch::new() })
-        .insert_resource(Playerid { id_0: Uuid::new_v4(), id_1: Uuid::new_v4() })
+        .insert_resource(Playerid { id_local: Uuid::new_v4(), id_remote: Uuid::new_v4() })
         .insert_resource(MatchboxSocket::new_ggrs("ws://127.0.0.1:3536/room"))
         .add_systems((
             play_music.in_schedule(OnEnter(GameState::Match)),
@@ -55,12 +55,15 @@ fn main() {
             set_time_score.in_schedule(OnEnter(GameState::Ready)),
             set_player.in_schedule(OnEnter(GameState::Ready)),
             follow.run_if(in_state(GameState::Ready)),
+            game_start_ui.in_schedule(OnEnter(GameState::Ready)),
+            despawn_start_ui.in_schedule(OnExit(GameState::Ready)),
 
             // Start Game
             move_system.in_schedule(GGRSSchedule).run_if(in_state(GameState::Game)),
             update_game_data.run_if(in_state(GameState::Game)),
             follow.run_if(in_state(GameState::Game)),
             spawn_enemy.in_schedule(OnEnter(GameState::Game)),
+            
         ))
         .add_systems((
             enemy_movement,

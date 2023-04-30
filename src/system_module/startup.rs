@@ -6,7 +6,8 @@ use bevy_ggrs::RollbackIdProvider;
 use rand::prelude::StdRng;
 use rand::{Rng, SeedableRng};
 
-use crate::component::{Player, PlayerSrc, GameDuration, Enemy};
+use crate::game_ui::styles::*;
+use crate::component::{Player, PlayerSrc, GameDuration, Enemy, GamestartMenu};
 use crate::system_module::view::MAP_SIZE;
 
 pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, player_query: Query<Entity, With<Player>>) {
@@ -124,10 +125,11 @@ pub fn set_time_score(mut gameduration: ResMut<GameDuration>, mut query: Query<&
 }
 
 // 게임 시작 시, 게임 종료 후 다시 시작 시 player를 set 해주는 함수
-pub fn set_player(mut commands: Commands, mut rip: ResMut<RollbackIdProvider>, player_query: Query<Entity, With<Player>>) {
+pub fn set_player(mut commands: Commands, mut rip: ResMut<RollbackIdProvider>, player_query: Query<Entity, With<Player>>, enemy_query: Query<Entity, With<Enemy>>) {
 
     // player 및 emeimy 재생성
-    for entity in player_query.iter(){  commands.entity(entity).despawn(); }
+    for player_entity in player_query.iter(){ commands.entity(player_entity).despawn(); }
+    for enemy_entity in enemy_query.iter() { commands.entity(enemy_entity).despawn(); }
     
     commands.spawn(
         (
@@ -205,5 +207,38 @@ pub fn despawn_enemy(mut commands: Commands, mut query: Query<(Entity, &Transfor
             enemy_transform.translation.y < -map_size / 2.0 || enemy_transform.translation.y > map_size / 2.0 {
             commands.entity(enemy_entity).despawn();
         }
+    }
+}
+
+pub fn game_start_ui(mut commands: Commands, asset_server: Res<AssetServer>){
+    commands.spawn(
+        (
+            NodeBundle {
+                style: GAMESTART_MENU_STYLE,
+                background_color: Color::GRAY.into(),
+                ..default()
+            },
+            GamestartMenu {},
+        )).with_children(|parent|{
+            // Text
+            parent.spawn(TextBundle{
+                text: Text {
+                    sections: vec![
+                        TextSection::new(
+                            "Press Space Bar",
+                            get_result_text_style(&asset_server),
+                        )
+                    ],
+                    alignment: TextAlignment::Center,
+                    ..default()
+                },
+                ..default()
+            });
+        });
+}
+
+pub fn despawn_start_ui(mut commands: Commands, gamestart_menu_query: Query<Entity, With<GamestartMenu>>){
+    if let Ok(gamestart_menu_entity) = gamestart_menu_query.get_single() {
+        commands.entity(gamestart_menu_entity).despawn_recursive();
     }
 }

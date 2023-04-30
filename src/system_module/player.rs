@@ -14,8 +14,6 @@ const RIGHT: u8 = 1 << 3;
 const SPACE: u8 = 1 << 4; // game start
 const ENTER: u8 = 1 << 5; // game over -> game ready
 const CLICK_REPLAY: u8 = 1 << 5;
-const ESC : u8 = 1 << 6; // game over 게임이 끝나는 이벤트가 아직 개발 중이기에 ESC를 눌렀을 때 게임이 끝난 걸로 테스트 진행함.
-                               // 어차피 GameState만 GameOver로 변경하면 되는 걸로 진행함
 const QUIT: u8 = 1 << 7;
 const CLICK_QUIT: u8 = 1 << 7; // game out
 
@@ -29,10 +27,6 @@ pub fn input(_: In<ggrs::PlayerHandle>, keys: Res<Input<KeyCode>>, mouses: Res<I
     if keys.any_pressed([KeyCode::Left]) { input |= LEFT }
     if keys.any_pressed([KeyCode::Right]) { input |= RIGHT; }
     if keys.any_pressed([KeyCode::Space]) { input |= SPACE; }
-    if keys.any_pressed([KeyCode::Escape]) { 
-        input |= ESC; 
-        
-    }
     if keys.any_pressed([KeyCode::Return]) { input |= ENTER; }
 
     if mouses.any_pressed([MouseButton::Left]) {
@@ -75,13 +69,6 @@ pub fn transition_state(pi: Res<PlayerInputs<GgrsConfig>>, query_player: Query<&
                 commands.insert_resource(NextState(Some(GameState::Ready)));
             }
         } 
-        // 현재 Game Over에 대한 이벤트가 없어서 임시로 ECS 누를 시 GameOver되게 하는 함수
-        else if input & ESC != 0 {
-            if game_state.0 != GameState::GameOver {
-                // 게임 종료 이벤트 발생하면 스코어 싱크 맞추는 코드 추가하기
-                commands.insert_resource(NextState(Some(GameState::GameOver)));
-            }
-        }
         // Game Over에서 Quit으로 변경하는 함수
         else if input & QUIT != 0 {
             game_exit_event_writer.send(AppExit); // 일단 한명 나가면 둘다 나가는 걸로 하자.
