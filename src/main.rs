@@ -5,6 +5,7 @@ use bevy_asset_loader::prelude::*;
 use bevy_ggrs::*;
 use bevy_matchbox::prelude::*;
 use bevy::math::Vec3Swizzles;
+use bevy_embedded_assets::EmbeddedAssetPlugin;
 
 use crate::component::{GameState, GameDuration, Playerid};
 use crate::system_module::network::{GgrsConfig, wait_socket};
@@ -39,7 +40,7 @@ fn main() {
                 ..default()
             }),
             ..default()
-        }))
+        }).build().add_before::<AssetPlugin, _>(EmbeddedAssetPlugin))
         .add_plugin(GameOverPlugin)
         .insert_resource(ClearColor(Color::WHITE))
         .insert_resource(GameDuration { game_time: Stopwatch::new() })
