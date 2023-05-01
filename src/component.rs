@@ -40,6 +40,9 @@ pub struct GameDuration {
 
 #[derive(Resource)]
 pub struct Playerid {
-    pub id_0: Uuid,
-    pub id_1: Uuid,
+    pub id_local: Uuid, // local player peer id
+    pub id_remote: Uuid, // remote player peer id
 }
+
+#[derive(Component)]
+pub struct GamestartMenu {}

@@ -21,9 +21,9 @@ pub fn build_gameover_menu(commands: &mut Commands, asset_server: &Res<AssetServ
                            query_player: Query<(&Player, &PlayerSrc)>, local_player: Option<Res<LocalPlayer>>,
                            player_id: &Res<Playerid>) -> Entity {
     let mut player1_score = String::new();
-    let player1_id = player_id.id_0.to_string();
+    let player1_id = player_id.id_local.to_string();
     let mut player2_score = String::new();
-    let player2_id = player_id.id_1.to_string();
+    let player2_id = player_id.id_remote.to_string();
     let mut final_scroe = 0;
     let now = Local::now();
     let is_handle = match local_player {

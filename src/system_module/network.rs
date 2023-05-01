@@ -26,12 +26,12 @@ pub fn wait_socket(mut commands: Commands, mut socket: ResMut<MatchboxSocket<Sin
 
     for (i, player) in players.into_iter().enumerate() {
         if player == PlayerType::Local { 
-            player_id.id_0 = socket.id().unwrap().0;
+            player_id.id_local = socket.id().unwrap().0;
             commands.insert_resource(LocalPlayer(i)); 
         }
         else { 
             match player {
-                PlayerType::Remote(peer_id) => { player_id.id_1 = peer_id.0; }
+                PlayerType::Remote(peer_id) => { player_id.id_remote = peer_id.0; }
                 _ => {}
             }
             
