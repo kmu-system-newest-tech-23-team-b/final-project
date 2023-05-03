@@ -1,5 +1,5 @@
 [Library LICENSE]
-rand = "0.8.5"
+rand
 MIT OR Apache-2.0
 
 bevy
